@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: vera-engagement-composer
+    runtime: python
+    plan: free
+    region: singapore
+    healthCheckPath: /v1/healthz
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: VERA_TEAM_NAME
+        sync: false
+      - key: VERA_TEAM_MEMBERS
+        sync: false
+      - key: VERA_CONTACT_EMAIL
+        sync: false
+      - key: VERA_MODEL_LABEL
+        sync: false
+      - key: VERA_LLM_ENABLED
+        value: "false"
+      - key: VERA_LLM_API_KEY
+        sync: false
+      - key: VERA_LLM_PROVIDER
+        value: "groq"
+      - key: VERA_LLM_MODEL
+        value: "llama-3.3-70b-versatile"
+      - key: VERA_LLM_TIMEOUT
+        value: "4.0"
+      - key: VERA_DETERMINISTIC_ONLY
+        value: "false"
