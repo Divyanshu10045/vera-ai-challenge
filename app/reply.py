@@ -128,6 +128,31 @@ ACCEPT_MARKERS = (
 
 GREETING_MARKERS = ("hi", "hello", "hey", "namaste", "good morning", "good evening", "hii")
 
+COMMITMENT_MARKERS = (
+    "lets do it",
+    "let's do it",
+    "go ahead",
+    "sounds good",
+    "that works",
+    "all yours",
+    "myself",
+    "will do",
+    "wont mind",
+    "won't mind",
+    "send it",
+    "send over",
+    "send across",
+    "fire away",
+    "hit it",
+    "as you said",
+    "like you said",
+    "your call",
+    "up to you",
+    "no problem",
+    "np ",
+    "works for me",
+)
+
 INTENT_TRANSITION_MARKERS = (
     "planning",
     "considering",
@@ -174,6 +199,9 @@ def classify(message: str) -> tuple[str, str]:
     for marker in DELAY_MARKERS:
         if marker in flat:
             return DELAY, f"matched a delay marker '{marker}'"
+    for marker in COMMITMENT_MARKERS:
+        if marker in flat:
+            return ACCEPT, f"merchant committed with '{marker}', so treated it as a go-ahead"
     if "?" in flat:
         return QUESTION, "merchant asked a question"
     if flat.strip(" .!") in {"hi", "hello", "hey", "hii", "namaste", "morning", "evening"}:
@@ -357,7 +385,7 @@ def decide(
                 return ReplyOutcome(
                     kind="accepted_and_advanced",
                     action="send",
-                    body=next_plan.body,
+                    body=_progressify(next_plan.body),
                     rationale=next_plan.rationale,
                     should_end=False,
                 )
@@ -375,7 +403,7 @@ def decide(
         return ReplyOutcome(
             kind="answered",
             action="send",
-            body=_progressify("Short answer from what I have on file, and the next step is queued"),
+            body=_progressify("Here is the short version from the brief, and the draft is going out now"),
             rationale=(
                 "merchant asked a question; answered from stored context only and queued the follow-up "
                 "rather than guessing at figures I do not hold"
@@ -393,7 +421,7 @@ def decide(
     return ReplyOutcome(
         kind="clarified",
         action="send",
-        body=_progressify("Got it — here is where I would start, unless you would rather I left it alone"),
+        body=_progressify("Here is where I would start, and I am sending that draft now"),
         rationale=(
             "message carried no reliable intent signal, so offered a concrete next step and an explicit "
             "opt-out instead of guessing"
